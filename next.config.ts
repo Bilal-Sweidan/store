@@ -1,12 +1,13 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
   reactStrictMode: true,
   turbopack: {}
-  // swcMinify: true
 };
+
+const withNextIntl = createNextIntlPlugin();
 
 const withPWA = require('next-pwa')({
   dest: 'public',
@@ -15,4 +16,4 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
 })
 
-export default withPWA(nextConfig);
+export default withPWA(withNextIntl(nextConfig));

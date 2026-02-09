@@ -1,0 +1,9 @@
+{
+    "Tab": {
+        "home": "home",
+        "setting": "Setting",
+        "favorit": "Favorit",
+        "category": "Category",
+        "cart": "Cart"
+    }
+}

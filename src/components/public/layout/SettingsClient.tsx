@@ -3,9 +3,13 @@
 import { Globe, Palette } from "lucide-react"
 import DropdownList from "@/components/shared/input/DropdownList";
 import { useTheme } from "@/context/ThemeContext";
+import { Link } from "@/i18n/navigation";
+import { usePathname } from "next/navigation";
+import LanguageSwitcher from "@/components/shared/button/LangSwitcher";
 
 export default function SettingsClient() {
     const { theme, setTheme } = useTheme()
+    const pathname = usePathname()
     return (
         <>
             <div className="px-5 py-10 bg-card space-y-5">
@@ -14,9 +18,7 @@ export default function SettingsClient() {
                         <Globe size={25} />
                         language
                     </div>
-                    <button className="font-bold hover:cursor-pointer">
-                        EN
-                    </button>
+                    <LanguageSwitcher />
                 </nav>
 
                 <nav className="flex gap-2 justify-between capitalize">

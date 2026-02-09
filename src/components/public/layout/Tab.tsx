@@ -7,13 +7,14 @@ import { useTranslations } from "next-intl"
 
 
 export default function MobileTabs() {
+    const t = useTranslations("Tab")
     const pathname = usePathname()
     const tabs = [
-        { href: "/app", label: "Home", icon: House },
+        { href: "/app", label: "home", icon: House },
         { href: "/app/favorit", label: "favorit", icon: Heart },
-        { href: "/app/category", label: "Category", icon: LayoutGrid },
-        { href: "/app/cart", label: "Cart", icon: BaggageClaim },
-        { href: "/app/setting", label: "Setting", icon: Settings },
+        { href: "/app/category", label: "category", icon: LayoutGrid },
+        { href: "/app/cart", label: "cart", icon: BaggageClaim },
+        { href: "/app/setting", label: "setting", icon: Settings },
     ]
 
     return (
@@ -29,7 +30,7 @@ export default function MobileTabs() {
                         `}
                     >
                         <Icon size={25} />
-                        <span className="text-xs mt-1 font-bold capitalize">{label}</span>
+                        <span className="text-xs mt-1 font-bold capitalize">{t(label)}</span>
                     </Link>
                 )
             })}
