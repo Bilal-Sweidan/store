@@ -26,7 +26,7 @@ export default function DropdownList<T extends string>({
             className="border rounded px-3 py-2"
         >
             {data.map((item) => (
-                <option key={item} value={item} className="text-text-primary">
+                <option key={item} value={item} className="text-primary">
                     {item}
                 </option>
             ))}

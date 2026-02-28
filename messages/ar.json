@@ -5,5 +5,9 @@
         "favorit": "المفضلة",
         "category": "الفئات",
         "cart": "السلة"
+    },
+    "SettingPage": {
+        "theme": "السمة",
+        "language": "اللغة"
     }
 }

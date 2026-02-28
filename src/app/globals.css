@@ -1,36 +1,39 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
 
-/* 🌞 LIGHT */
-html.light {
-  --bg-main: #F8FAFC;
-  --bg-card: #FFFFFF;
-  --header-bg: #FFFFFF;
-
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-
-  --primary: #2563EB;
+/* ============ THEME VARIABLES ============ */
+:root {
+  --bg-main: 248 250 252;
+  --bg-card: 255 255 255;
+  --header-bg: 255 255 255;
+  --text-primary: 15 23 42;
+  --text-secondary: 71 85 105;
+  --accent: 37 99 235;
 }
 
-/* 🌙 DARK */
-html.dark {
-  --bg-main: #0B1220;
-  --bg-card: #111827;
-  --header-bg: #111827;
-
-  --text-primary: #E5E7EB;
-  --text-secondary: #9CA3AF;
-
-  --primary: #3B82F6;
+.dark {
+  --bg-main: 11 18 32;
+  --bg-card: 17 24 39;
+  --header-bg: 17 24 39;
+  --text-primary: 229 231 235;
+  --text-secondary: 156 163 175;
+  --accent: 59 130 246;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
+/* ============ BASE STYLES ============ */
+@layer base {
+  html {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
 
-body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  body {
+    background-color: rgb(var(--bg-main));
+    color: rgb(var(--text-primary));
+  }
 }
