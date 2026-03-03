@@ -8,7 +8,7 @@ export default function CartPage() {
         { id: 2, name: "Samsung Galaxy S24 Ultra", price: 999, qty: 2 },
     ]);
 
-    const updateQty = (id, type) => {
+    const updateQty = (id:number, type:string) => {
         setCart((prev) =>
             prev.map((item) =>
                 item.id === id
@@ -26,7 +26,7 @@ export default function CartPage() {
         );
     };
 
-    const removeItem = (id) => {
+    const removeItem = (id:number) => {
         setCart((prev) => prev.filter((item) => item.id !== id));
     };
 
