@@ -12,15 +12,15 @@ export default function MobileTabs() {
     console.log(locale)
     const pathname = usePathname()
     const tabs = [
-        { href: "/app", label: "home", icon: House },
-        { href: "/app/favorit", label: "favorit", icon: Heart },
-        { href: "/app/category", label: "category", icon: LayoutGrid },
-        { href: "/app/cart", label: "cart", icon: BaggageClaim },
-        { href: "/app/setting", label: "setting", icon: Settings },
+        { href: "/client", label: "home", icon: House },
+        { href: "/client/favorit", label: "favorit", icon: Heart },
+        { href: "/client/category", label: "category", icon: LayoutGrid },
+        { href: "/client/cart", label: "cart", icon: BaggageClaim },
+        { href: "/client/setting", label: "setting", icon: Settings },
     ]
 
     return (
-        <nav className="w-full flex py-1 fixed bottom-0 border-t-2 border-[#E2E8F0] bg-white none">
+        <nav className="w-full xl:w-20 xl:h-full sm:flex xl:block py-1 sm:fixed bottom-0 border-t-2 border-[#E2E8F0] bg-white">
             {tabs.map(({ href, label, icon: Icon }) => {
                 const active = pathname === `/${locale}${href}`
                 console.log(pathname, `/${locale}${href}`)

@@ -6,7 +6,7 @@ const USER_ACTIVE_STATUS = {
     2: "verified"
 }
 const UserSchema = new Schema({
-    companyName: {
+    TradeName: {
         type: String,
         required: true,
         trim: true
@@ -17,7 +17,6 @@ const UserSchema = new Schema({
             required: true
         },
         contact: {
-            email: String,
             Number: String,
             prefix: {
                 type: String,
@@ -28,6 +27,9 @@ const UserSchema = new Schema({
     email: {
         type: String,
         required: true
+    },
+    logo: {
+        type: String,
     },
     address: {
         type: String,
