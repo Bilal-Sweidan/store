@@ -20,7 +20,7 @@ export default function MobileTabs() {
     ]
 
     return (
-        <nav className="w-full xl:w-20 xl:h-full sm:flex xl:block py-1 sm:fixed bottom-0 border-t-2 border-[#E2E8F0] bg-white">
+        <nav className="w-full xl:w-20 xl:h-full max-sm:flex xl:block py-1 sm:fixed bottom-0 border-t-2 border-[#E2E8F0] bg-white">
             {tabs.map(({ href, label, icon: Icon }) => {
                 const active = pathname === `/${locale}${href}`
                 console.log(pathname, `/${locale}${href}`)
