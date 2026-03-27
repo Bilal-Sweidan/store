@@ -6,26 +6,21 @@ const USER_ACTIVE_STATUS = {
     2: "verified"
 }
 const UserSchema = new Schema({
-    TradeName: {
+    tradeName: {
         type: String,
         required: true,
         trim: true
     },
-    manager: {
-        name: {
-            type: String,
-            required: true
-        },
-        contact: {
-            Number: String,
-            prefix: {
-                type: String,
-                default: "963"
-            }
-        }
+    phone: {
+        Number: String,
     },
     email: {
         type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        select: false,
         required: true
     },
     logo: {
@@ -35,35 +30,39 @@ const UserSchema = new Schema({
         type: String,
         trim: true
     },
-    agencyStatement: {
-        type: String,
-    },
-    commercialRegister: {
-        type: String,
-        trim: true,
-        required: true
-    },
-    termsAccepted: {
-        type: Boolean,
-        default: false,
-        required: true
-    },
-    location: {
-        type: {
-            type: String,
-            enum: ["Point"],
-            required: true,
-            default: ["Point"]
-        },
-        coordinates: {
-            type: [Number],
-            required: true
-        }
-    },
+    // agencyStatement: {
+    //     type: String,
+    // },
+    // commercialRegister: {
+    //     type: String,
+    //     trim: true,
+    //     // required: true
+    // },
+    // termsAccepted: {
+    //     type: Boolean,
+    //     default: false,
+    //     required: true
+    // },
+    // location: {
+    //     type: {
+    //         type: String,
+    //         enum: ["Point"],
+    //         // required: true,
+    //         default: "Point"
+    //     },
+    //     coordinates: {
+    //         type: [Number],
+    //         // required: true
+    //     }
+    // },
     active: {
         type: String,
         enum: Object.values(USER_ACTIVE_STATUS),
         default: USER_ACTIVE_STATUS[0]
+    },
+    role: {
+        type: mongoose.Types.ObjectId,
+        ref: "role"
     },
     createdAt: {
         type: Number,

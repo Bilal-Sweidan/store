@@ -1,4 +1,7 @@
 import MainHeader from "@/components/public/layout/headers/MainHeader";
+import Image from "next/image";
+import { describe } from "node:test";
+
 
 export default async function Home() {
     const categories = [
@@ -10,22 +13,22 @@ export default async function Home() {
     ];
 
     const featuredProducts = [
-        { name: "iPhone 15 Pro", price: "$999" },
-        { name: "MacBook Air M3", price: "$1299" },
-        { name: "Sony WH-1000XM5", price: "$399" },
-        { name: "PlayStation 5", price: "$499" },
+        { name: "power plus", describe: "550 W ", price: "$999", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
+        { name: "MacBook Air M3", price: "$1299", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
+        { name: "PlayStation 5", price: "$499", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
+        { name: "Sony WH-1000XM5", price: "$399", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
     ];
 
     const flashDeals = [
-        { name: "Samsung Galaxy S24", price: "$899", discount: "10%" },
-        { name: "Google Pixel 8", price: "$799", discount: "15%" },
+        { name: "Samsung Galaxy S24", price: "$899", discount: "10%", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
+        { name: "Google Pixel 8", price: "$799", discount: "15%", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
     ];
 
     const brands = ["Apple", "Samsung", "Sony", "Dell", "HP"];
 
     return (
-        <main className="bg-main min-h-screen pb-20">
-            <div className="mx-auto max-w-md">
+        <main className="bg-main w-full min-h-full pb-20">
+            <div className="mx-auto max-w-5xl">
                 {/* 🔝 Header */}
                 <MainHeader />
 
@@ -84,7 +87,7 @@ export default async function Home() {
                 </section>
 
                 {/* 📂 Categories Scroll */}
-                <section className="px-4 mt-6">
+                {/* <section className="px-4 mt-6">
                     <div className="mb-3 flex items-center justify-between">
                         <h2 className="text-sm font-semibold text-primary">Shop by category</h2>
                         <button className="text-[11px] text-secondary">View all</button>
@@ -103,7 +106,7 @@ export default async function Home() {
                             </button>
                         ))}
                     </div>
-                </section>
+                </section> */}
 
                 {/* ⚡ Flash Deals */}
                 <section className="px-4 mt-7">
@@ -116,20 +119,27 @@ export default async function Home() {
                             ⏰ 02:15:32
                         </span>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="columns-2 gap-3 space-y-3">
                         {flashDeals.map((product) => (
                             <article
                                 key={product.name}
-                                className="relative overflow-hidden rounded-2xl bg-card p-3 shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md"
+                                className="break-inside-avoid relative overflow-hidden rounded-2xl bg-card p-3 shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md"
                             >
-                                <span className="absolute left-2 top-2 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm">
+                                <span className="absolute left-2 top-2 z-10 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm">
                                     {product.discount} OFF
                                 </span>
-                                <button className="absolute right-2 top-2 rounded-full bg-white/90 p-1 text-xs text-gray-500 shadow-sm hover:text-red-500">
+                                <button className="absolute right-2 top-2 z-10 rounded-full bg-white/90 p-1 text-xs text-gray-500 shadow-sm hover:text-red-500">
                                     ♡
                                 </button>
-                                <div className="mb-2 flex h-24 items-center justify-center rounded-xl bg-gradient-to-br from-gray-100 to-gray-200">
-                                    <span className="text-xs text-gray-400">Product image</span>
+                                <div className="mb-2 overflow-hidden rounded-xl bg-gradient-to-br from-gray-100 to-gray-200">
+                                    <Image
+                                        src={product.image}
+                                        alt={product.name}
+                                        width={0}
+                                        height={0}
+                                        sizes="50vw"
+                                        className="w-full h-auto"
+                                    />
                                 </div>
                                 <h3 className="line-clamp-2 text-[11px] font-medium text-primary">
                                     {product.name}
@@ -153,18 +163,23 @@ export default async function Home() {
                             See all
                         </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        {featuredProducts.map((product, index) => (
+                    <div className="columns-2 gap-3 space-y-3">
+                        {featuredProducts.map((product) => (
                             <article
                                 key={product.name}
-                                className="overflow-hidden rounded-2xl bg-card p-3 shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md"
+                                className="break-inside-avoid overflow-hidden rounded-2xl bg-card p-3 shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md hover:cursor-pointer"
                             >
-                                <div className="mb-2 h-24 rounded-xl bg-gray-100">
-                                    <div className="flex h-full items-center justify-center text-xs text-gray-400">
-                                        Image {index + 1}
-                                    </div>
+                                <div className="mb-2 overflow-hidden rounded-xl bg-gray-100">
+                                    <Image
+                                        src={product.image}
+                                        alt={product.name}
+                                        width={0}
+                                        height={0}
+                                        sizes="50vw"
+                                        className="w-full h-auto"
+                                    />
                                 </div>
-                                <h3 className="line-clamp-2 text-[11px] font-medium text-primary">
+                                <h3 className="line-clamp-2 text-[11px] font-medium text-primary capitalize text-lg">
                                     {product.name}
                                 </h3>
                                 <div className="mt-1 flex items-center justify-between">
@@ -176,23 +191,6 @@ export default async function Home() {
                     </div>
                 </section>
 
-                {/* 🏷 Brand Showcase / CTA
-                <section className="px-4 mt-8 pb-24">
-                    <div className="mb-3 flex items-center justify-between">
-                        <h2 className="text-sm font-semibold text-primary">Top brands</h2>
-                        <button className="text-[11px] text-secondary">Explore</button>
-                    </div>
-                    <div className="flex gap-3 overflow-x-auto pb-1">
-                        {brands.map((brand) => (
-                            <div
-                                key={brand}
-                                className="min-w-[110px] rounded-2xl bg-card px-4 py-3 text-center text-xs font-semibold text-primary shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:bg-indigo-50 hover:text-indigo-700"
-                            >
-                                {brand}
-                            </div>
-                        ))}
-                    </div>
-                </section> */}
             </div>
         </main>
     );

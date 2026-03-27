@@ -5,11 +5,10 @@ import { useState, ChangeEvent, FormEvent } from "react"
 interface ResourceData {
 
   companyName: string
-  managerName: string
-  managerEmail: string
-  managerNumber: string
+  phone: string
   email: string
   address: string
+  password: string
 
   agencyStatement: File | null
   commercialRegister: File | null
@@ -21,11 +20,10 @@ export default function ResourceRegister() {
 
   const [formData, setFormData] = useState<ResourceData>({
     companyName: "",
-    managerName: "",
-    managerEmail: "",
-    managerNumber: "",
+    phone: "",
     email: "",
     address: "",
+    password: "",
     agencyStatement: null,
     commercialRegister: null,
     termsAccepted: false
@@ -77,7 +75,6 @@ export default function ResourceRegister() {
         ...formData,
         [name]: value
       })
-
     }
 
   }
@@ -86,23 +83,24 @@ export default function ResourceRegister() {
 
     e.preventDefault()
 
-    const data = new FormData()
+    // const data = new FormData()
 
-    Object.entries(formData).forEach(([key, value]) => {
+    // Object.entries(formData).forEach(([key, value]) => {
 
-      if (value !== null)
-        data.append(key, value as any)
+    //   if (value !== null)
+    //     data.append(key, value as any)
 
-    })
+    // })
 
-    const res = await fetch("/api/register/resource", {
+    console.log(formData)
+    const res = await fetch("/api/v1/auth/register/supplier", {
       method: "POST",
-      body: data
+      body: JSON.stringify(formData)
     })
 
     const result = await res.json()
 
-    alert(result.message || "Registered")
+    // alert(result.message || "Registered")
   }
 
   return (
@@ -110,33 +108,16 @@ export default function ResourceRegister() {
     <form onSubmit={handleSubmit} className="space-y-4">
 
       <input
-        name="companyName"
-        placeholder="Company Name"
+        name="tradeName"
+        placeholder="Trade Name"
         required
         onChange={handleChange}
         className="w-full border rounded px-3 py-2"
       />
 
       <input
-        name="managerName"
-        placeholder="Manager Name"
-        required
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2"
-      />
-
-      <input
-        name="managerEmail"
-        type="email"
-        placeholder="Manager Email"
-        required
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2"
-      />
-
-      <input
-        name="managerNumber"
-        placeholder="Manager Phone"
+        name="phone"
+        placeholder="Phone"
         required
         onChange={handleChange}
         className="w-full border rounded px-3 py-2"
@@ -146,6 +127,15 @@ export default function ResourceRegister() {
         name="email"
         type="email"
         placeholder="Company Email"
+        required
+        onChange={handleChange}
+        className="w-full border rounded px-3 py-2"
+      />
+
+      <input
+        name="password"
+        type="password"
+        placeholder="password"
         required
         onChange={handleChange}
         className="w-full border rounded px-3 py-2"
