@@ -1,22 +1,19 @@
-import MainHeader from "@/components/public/layout/headers/MainHeader";
+"use client"
 import Image from "next/image";
-import { describe } from "node:test";
+import Link from "next/link";
+// next-intl
+import { useLocale } from "next-intl";
+// components
+import MainHeader from "@/components/public/layout/headers/MainHeader";
 
-
-export default async function Home() {
-    const categories = [
-        { name: "Phones", icon: "📱" },
-        { name: "Laptops", icon: "💻" },
-        { name: "TVs", icon: "📺" },
-        { name: "Gaming", icon: "🎮" },
-        { name: "Audio", icon: "🎧" },
-    ];
+export default function Home() {
+    const local = useLocale()
 
     const featuredProducts = [
-        { name: "power plus", describe: "550 W ", price: "$999", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
-        { name: "MacBook Air M3", price: "$1299", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
-        { name: "PlayStation 5", price: "$499", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
-        { name: "Sony WH-1000XM5", price: "$399", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
+        { _id: 1, name: "power plus", describe: "SolarPower Europe is the award-winning link between policymakers and the solar PV value chain. Get to know the SolarPower Europe team working to transform ", price: "$999", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
+        { _id: 2, name: "MacBook Air M3", describe: "SolarPower Europe is the award-winning link between policymakers and the solar PV value chain. Get to know the SolarPower Europe team working to transform ", price: "$1299", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
+        { _id: 3, name: "PlayStation 5", describe: "SolarPower Europe is the award-winning link between policymakers and the solar PV value chain. Get to know the SolarPower Europe team working to transform ", price: "$499", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
+        { _id: 4, name: "Sony WH-1000XM5", describe: "SolarPower Europe is the award-winning link between policymakers and the solar PV value chain. Get to know the SolarPower Europe team working to transform ", price: "$399", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
     ];
 
     const flashDeals = [
@@ -24,7 +21,6 @@ export default async function Home() {
         { name: "Google Pixel 8", price: "$799", discount: "15%", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
     ];
 
-    const brands = ["Apple", "Samsung", "Sony", "Dell", "HP"];
 
     return (
         <main className="bg-main w-full min-h-full pb-20">
@@ -86,75 +82,6 @@ export default async function Home() {
                     </div>
                 </section>
 
-                {/* 📂 Categories Scroll */}
-                {/* <section className="px-4 mt-6">
-                    <div className="mb-3 flex items-center justify-between">
-                        <h2 className="text-sm font-semibold text-primary">Shop by category</h2>
-                        <button className="text-[11px] text-secondary">View all</button>
-                    </div>
-                    <div className="flex gap-3 overflow-x-auto pb-1">
-                        {categories.map((cat) => (
-                            <button
-                                key={cat.name}
-                                className="group min-w-[90px] rounded-2xl bg-card px-3 py-3 text-center shadow-sm ring-1 ring-gray-200/70 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-indigo-200"
-                            >
-                                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 text-xl group-hover:bg-indigo-100">
-                                    {cat.icon}
-                                </div>
-                                <p className="mt-2 text-xs font-medium text-primary">{cat.name}</p>
-                                <p className="mt-0.5 text-[10px] text-secondary">124 items</p>
-                            </button>
-                        ))}
-                    </div>
-                </section> */}
-
-                {/* ⚡ Flash Deals */}
-                <section className="px-4 mt-7">
-                    <div className="mb-3 flex items-baseline justify-between">
-                        <div>
-                            <h2 className="text-sm font-semibold text-primary">Flash deals</h2>
-                            <p className="text-[11px] text-secondary">Limited time offers just for today</p>
-                        </div>
-                        <span className="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-semibold text-red-500">
-                            ⏰ 02:15:32
-                        </span>
-                    </div>
-                    <div className="columns-2 gap-3 space-y-3">
-                        {flashDeals.map((product) => (
-                            <article
-                                key={product.name}
-                                className="break-inside-avoid relative overflow-hidden rounded-2xl bg-card p-3 shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md"
-                            >
-                                <span className="absolute left-2 top-2 z-10 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-semibold text-white shadow-sm">
-                                    {product.discount} OFF
-                                </span>
-                                <button className="absolute right-2 top-2 z-10 rounded-full bg-white/90 p-1 text-xs text-gray-500 shadow-sm hover:text-red-500">
-                                    ♡
-                                </button>
-                                <div className="mb-2 overflow-hidden rounded-xl bg-gradient-to-br from-gray-100 to-gray-200">
-                                    <Image
-                                        src={product.image}
-                                        alt={product.name}
-                                        width={0}
-                                        height={0}
-                                        sizes="50vw"
-                                        className="w-full h-auto"
-                                    />
-                                </div>
-                                <h3 className="line-clamp-2 text-[11px] font-medium text-primary">
-                                    {product.name}
-                                </h3>
-                                <div className="mt-1 flex items-center justify-between">
-                                    <span className="text-xs font-bold text-indigo-600">{product.price}</span>
-                                    <button className="rounded-full bg-indigo-600 px-2 py-1 text-[10px] font-semibold text-white hover:bg-indigo-700">
-                                        Add
-                                    </button>
-                                </div>
-                            </article>
-                        ))}
-                    </div>
-                </section>
-
                 {/* 🛍 Featured Products */}
                 <section className="px-4 mt-7">
                     <div className="mb-3 flex items-center justify-between">
@@ -165,7 +92,8 @@ export default async function Home() {
                     </div>
                     <div className="columns-2 gap-3 space-y-3">
                         {featuredProducts.map((product) => (
-                            <article
+                            <Link
+                                href={`/${local}/client/product/${product._id}`}
                                 key={product.name}
                                 className="break-inside-avoid overflow-hidden rounded-2xl bg-card p-3 shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md hover:cursor-pointer"
                             >
@@ -182,11 +110,14 @@ export default async function Home() {
                                 <h3 className="line-clamp-2 text-[11px] font-medium text-primary capitalize text-lg">
                                     {product.name}
                                 </h3>
+                                <div>
+                                    <span className="text-xs">{product.describe}</span>
+                                </div>
                                 <div className="mt-1 flex items-center justify-between">
                                     <span className="text-xs font-bold text-indigo-600">{product.price}</span>
                                     <span className="text-[10px] text-secondary">Free delivery</span>
                                 </div>
-                            </article>
+                            </Link>
                         ))}
                     </div>
                 </section>
