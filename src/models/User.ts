@@ -1,4 +1,5 @@
 import mongoose, { Schema, model, models } from "mongoose";
+import "@/models/Role";
 
 const USER_ACTIVE_STATUS = {
     0: "pending",
@@ -61,8 +62,8 @@ const UserSchema = new Schema({
         default: USER_ACTIVE_STATUS[0]
     },
     role: {
-        type: mongoose.Types.ObjectId,
-        ref: "role"
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Role",
     },
     createdAt: {
         type: Number,

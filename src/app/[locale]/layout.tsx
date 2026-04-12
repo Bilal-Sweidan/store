@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from '@/components/shared/providers/ThemeProvider';
-
+import { SessionProvider } from 'next-auth/react';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
@@ -38,11 +38,13 @@ export default async function LocaleLayout({ children, params }: Props) {
     return (
         <html dir={locale == 'en' ? "ltr" : "rtl"} lang="en" suppressHydrationWarning>
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <ThemeProvider>
-                    <NextIntlClientProvider>
-                        {children}
-                    </NextIntlClientProvider>
-                </ThemeProvider>
+                <SessionProvider >
+                    <ThemeProvider>
+                        <NextIntlClientProvider>
+                            {children}
+                        </NextIntlClientProvider>
+                    </ThemeProvider>
+                </SessionProvider>
             </body>
         </html>
     )

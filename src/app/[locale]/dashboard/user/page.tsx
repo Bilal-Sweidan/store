@@ -4,7 +4,7 @@ export default function DashboardUser(){
 
     return (
         <>
-            users
+             <h1>Users</h1>
         </>
     )
 }

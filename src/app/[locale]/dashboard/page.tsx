@@ -1,7 +1,12 @@
 'use client'
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+
 
 export default function DashboardHomePage() {
+  const { data: session } = useSession()
+  console.log(session)
+
   const [stats] = useState([
     { title: "Total Users", value: "1,245", change: "+12%" },
     { title: "Revenue", value: "$34,500", change: "+8.2%" },
@@ -44,11 +49,10 @@ export default function DashboardHomePage() {
                 {stat.title}
               </span>
               <span
-                className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                  stat.change.includes("-")
-                    ? "bg-red-100 text-red-600"
-                    : "bg-green-100 text-green-600"
-                }`}
+                className={`text-xs font-semibold px-2 py-1 rounded-full ${stat.change.includes("-")
+                  ? "bg-red-100 text-red-600"
+                  : "bg-green-100 text-green-600"
+                  }`}
               >
                 {stat.change}
               </span>
