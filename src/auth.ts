@@ -23,7 +23,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: (credentials.email as string).toLowerCase().trim(),
         })
           .select("+password")
-          .populate<{ name?: string }>("role");
 
         if (!user) return null;
         if (user.active !== "verified") return null;
@@ -35,22 +34,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!isMatch) return null;
 
-        const roleDoc = user.role as unknown as { name?: string } | null;
-        const roleName =
-          typeof roleDoc?.name === "string"
-            ? roleDoc.name.toLowerCase().trim()
-            : null;
-
         return {
           id: user._id.toString(),
           email: user.email,
           name: user.tradeName,
           image: user.logo,
-          role:
-            user.role && typeof user.role === "object" && "_id" in user.role
-              ? String((user.role as { _id: unknown })._id)
-              : user.role?.toString(),
-          roleName,
+          role: user.role
         };
       },
     }),

@@ -18,11 +18,9 @@ export const authConfig: NextAuthConfig = {
                 const u = user as {
                     id: string;
                     role?: string;
-                    roleName?: string | null;
                 };
                 token.id = u.id;
                 token.role = u.role;
-                token.roleName = u.roleName ?? null;
             }
             return token;
         },
@@ -31,8 +29,6 @@ export const authConfig: NextAuthConfig = {
             if (token) {
                 session.user.id = token.id as string;
                 session.user.role = token.role as string | undefined;
-                session.user.roleName =
-                    (token.roleName as string | null | undefined) ?? null;
             }
             return session;
         },

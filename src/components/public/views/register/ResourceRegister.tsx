@@ -93,7 +93,7 @@ export default function ResourceRegister() {
     // })
 
     console.log(formData)
-    const res = await fetch("/api/v1/auth/register/supplier", {
+    const res = await fetch("/api/auth/register/supplier", {
       method: "POST",
       body: JSON.stringify(formData)
     })

@@ -1,11 +1,19 @@
 import mongoose, { Schema, model, models } from "mongoose";
 import "@/models/Role";
+import { unique } from "next/dist/build/utils";
 
-const USER_ACTIVE_STATUS = {
+export const USER_ACTIVE_STATUS = {
     0: "pending",
     1: "rejected",
     2: "verified"
 }
+
+const USER_ROLES = {
+    0: "client",
+    1: "supplier",
+    2: "admin"
+}
+
 const UserSchema = new Schema({
     tradeName: {
         type: String,
@@ -31,39 +39,33 @@ const UserSchema = new Schema({
         type: String,
         trim: true
     },
-    // agencyStatement: {
-    //     type: String,
-    // },
-    // commercialRegister: {
-    //     type: String,
-    //     trim: true,
-    //     // required: true
-    // },
-    // termsAccepted: {
-    //     type: Boolean,
-    //     default: false,
-    //     required: true
-    // },
-    // location: {
-    //     type: {
-    //         type: String,
-    //         enum: ["Point"],
-    //         // required: true,
-    //         default: "Point"
-    //     },
-    //     coordinates: {
-    //         type: [Number],
-    //         // required: true
-    //     }
-    // },
-    active: {
-        type: String,
-        enum: Object.values(USER_ACTIVE_STATUS),
-        default: USER_ACTIVE_STATUS[0]
+    status: {
+        active: {
+            type: String,
+            enum: Object.values(USER_ACTIVE_STATUS),
+            default: USER_ACTIVE_STATUS[0]
+        },
+        reviewedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+        reviewedAt: {
+            type: Date,
+            default: new Date()
+        },
+        note: {
+            type: String,
+        },
+        reason: {
+            type: String,
+        }
     },
     role: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role",
+        type: String,
+        enum: Object.values(USER_ROLES),
+        default: USER_ROLES[0],
+        unique: true,
+        lowercase: true
     },
     createdAt: {
         type: Number,

@@ -1,12 +1,13 @@
 "use client"
 import { useLocale } from "next-intl";
 import Link from "next/link";
-import { useState } from "react";
 import Image from "next/image";
 import { LayoutDashboard, User } from "lucide-react";
-
+import { signOut } from "next-auth/react";
 import logo from '../../../../public/3D2.png'
 import { usePathname } from "next/navigation";
+
+
 export default function Sidebar() {
   const pathname = usePathname()
   const locale = useLocale()
@@ -50,7 +51,7 @@ export default function Sidebar() {
 
       {/* Footer */}
       <div className="p-4 border-t border-slate-700">
-        <button className="w-full flex items-center justify-center py-3 rounded-xl text-sm font-medium hover:bg-red-500 hover:text-white transition-all duration-200">
+        <button className="w-full flex items-center justify-center py-3 rounded-xl text-sm font-medium hover:bg-red-500 hover:text-white transition-all duration-200" onClick={() => signOut()}>
           <span>Logout</span>
         </button>
       </div>

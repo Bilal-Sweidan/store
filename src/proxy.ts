@@ -27,7 +27,7 @@ export default NextAuth(authConfig).auth((req) => {
 
     const session = req.auth;
     const isLoggedIn = !!session?.user;
-    const roleName = session?.user?.roleName ?? null;
+    const roleName = session?.user?.role ?? null;
 
     if (isAuthPage(cleanPath)) {
         if (isLoggedIn) {

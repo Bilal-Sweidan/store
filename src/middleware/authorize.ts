@@ -6,15 +6,15 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 async function getRoleName(session: Session | null): Promise<string | undefined> {
-    if (session?.user?.roleName) {
-        return session.user.roleName;
+    if (session?.user?.role) {
+        return session.user.role;
     }
-    const roleId = session?.user?.role;
-    if (!roleId) return undefined;
+    // const roleId = session?.user?.role;
+    // if (!roleId) return undefined;
 
-    await connectToDatabase();
-    const role = await Role.findById(roleId).select("name");
-    return role?.name?.toLowerCase();
+    // await connectToDatabase();
+    const role = session?.user.role
+    return role?.toLowerCase();
 }
 
 /**
