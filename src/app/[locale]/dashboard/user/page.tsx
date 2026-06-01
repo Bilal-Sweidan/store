@@ -204,8 +204,8 @@ export default function DashboardUser() {
 
                                         {/* Status */}
                                         <td className="px-4 py-3">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyle.badge}`}>
-                                                {statusStyle.label}
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusStyle?.badge}`}>
+                                                {statusStyle?.label}
                                             </span>
                                         </td>
 
@@ -232,7 +232,7 @@ export default function DashboardUser() {
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <span className="text-xs text-gray-400">{statusStyle.label}</span>
+                                                <span className="text-xs text-gray-400">{statusStyle?.label}</span>
                                             )}
                                         </td>
                                     </tr>

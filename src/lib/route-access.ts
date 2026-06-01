@@ -3,11 +3,10 @@
  * Role names must match `Role.name` in the database (lowercase).
  */
 export const ROLE_ROUTE_RULES: { prefix: string; roles: string[] }[] = [
-  { prefix: "/dashboard", roles: ["admin"] },
   { prefix: "/supplier", roles: ["supplier", "resource"] },
-  { prefix: "/client/setting", roles: ["client"] },
-  { prefix: "/client/favorit", roles: ["client"] },
-  { prefix: "/client/cart", roles: ["client"] },
+  // { prefix: "/client/setting", roles: ["client"] },
+  // { prefix: "/client/favorit", roles: ["client"] },
+  // { prefix: "/client/cart", roles: ["client"] },
 ];
 
 const AUTH_PAGES = ["/client/auth/login", "/client/auth/register"];

@@ -1,56 +1,40 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import cloudinary from "@/lib/cloudinary";
-import multer from "multer";
-import streamifier from "streamifier";
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"]
+const MAX_SIZE_MB = 10
 
-function runMiddleware(req: any, res: any, fn: any) {
-    return new Promise((resolve, reject) => {
-        fn(req, res, (result: any) => {
-            if (result instanceof Error) return reject(result);
-            return resolve(result);
-        });
-    });
-}
+export async function POST(req: NextRequest) {
+    const formData = await req.formData()
+    const file = formData.get("file") as File
 
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    await runMiddleware(req, res, upload.single("file"));
+    // validate 
+    if (!file)
+        return NextResponse.json({ message: "No File Prodided !!" }, { status: 400 })
 
-    const file = (req as any).file;
+    if (!ALLOWED_TYPES.includes(file.type))
+        return NextResponse.json({ message: "Invalide file type !!" }, { status: 400 })
 
-    if (!file) {
-        return res.status(400).json({ error: "No file uploaded" });
-    }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024)
+        return NextResponse.json({ message: "File too large " }, { status: 400 })
 
-    const streamUpload = () =>
-        new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                { folder: "agency-documents" },
-                (error, result) => {
-                    if (result) resolve(result);
-                    else reject(error);
-                }
-            );
 
-            streamifier.createReadStream(file.buffer).pipe(stream);
-        });
+    //  upload
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-    try {
-        const result: any = await streamUpload();
+    const result = await cloudinary.uploader.upload(base64, {
+        folder: "LORENZE/USER/PRODUCTS",
+        transformation: [
+            { width: 400, height: 400, crop: "fill" },
+            { quality: "auto", fetch_format: "auto" }
+        ]
+    })
 
-        res.status(200).json({
-            url: result.secure_url,
-            public_id: result.public_id,
-        });
-    } catch (error) {
-        res.status(500).json({ error: "Upload failed" });
-    }
+    // return only what the client needs
+    return NextResponse.json({
+        url: result.secure_url,
+        puplicId: result.public_id
+    })
 }

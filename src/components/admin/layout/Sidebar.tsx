@@ -2,7 +2,7 @@
 import { useLocale } from "next-intl";
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, User } from "lucide-react";
+import { LayoutDashboard, User , Boxes } from "lucide-react";
 import { signOut } from "next-auth/react";
 import logo from '../../../../public/3D2.png'
 import { usePathname } from "next/navigation";
@@ -14,7 +14,8 @@ export default function Sidebar() {
 
   const menuItems = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { label: "Users", href: "/dashboard/user", icon: User }
+    { label: "Users", href: "/dashboard/user", icon: User },
+    { label: "Products", href: "/dashboard/product", icon: Boxes }
   ];
 
   return (

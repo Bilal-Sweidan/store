@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { authConfig } from "@/auth.config";
 import { connectToDatabase } from "@/lib/connectToDatabase";
-import User from "@/models/User";
+import User, { USER_ACTIVE_STATUS } from "@/models/User";
 import { comparePassword } from "@/lib/hashing.lib";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -25,7 +25,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .select("+password")
 
         if (!user) return null;
-        if (user.active !== "verified") return null;
+
+        const activeStatus =
+          user.status?.active ??
+          (user as { active?: string }).active;
+        if (activeStatus !== USER_ACTIVE_STATUS[2]) return null;
 
         const isMatch = await comparePassword(
           credentials.password as string,

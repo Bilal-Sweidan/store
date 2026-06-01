@@ -38,7 +38,7 @@ export const PATCH = withAdmin(async (req: NextRequest, { params }: { params: us
             }, { status: 404 })
         }
 
-        if (user.active !== "pending") {
+        if (user.status?.active !== USER_ACTIVE_STATUS[0]) {
             return NextResponse.json({
                 message: "this user is already active"
             }, { status: 400 })
