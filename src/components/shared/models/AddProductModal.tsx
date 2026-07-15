@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { IProduct } from '@/types/product';
+import Uploader from '@/components/public/input/Uploader';
 
 type NewProduct = Omit<IProduct, '_id' | 'createdAt' | 'updatedAt'>;
 
@@ -32,6 +33,7 @@ export default function AddProductModal({
     transportFees: '',
     transportTime: '',
     categoryId: '',
+    images: []
   });
 
   const [details, setDetails] = useState<{ key: string; value: string }[]>([]);
@@ -83,6 +85,7 @@ export default function AddProductModal({
       transportFees: '',
       transportTime: '',
       categoryId: '',
+      images: []
     });
     setDetails([]);
     setPictures([]);
@@ -135,6 +138,17 @@ export default function AddProductModal({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleUploadSuccess = (result: any) => {
+    console.log('Upload successful:', result);
+    // You can save the Cloudinary URL to your database here
+    const imageUrl = result.data.secure_url;
+    console.log('Image URL:', imageUrl);
+  };
+
+  const handleUploadError = (error: any) => {
+    console.error('Upload failed:', error);
   };
 
   if (!isOpen) return null;
@@ -358,40 +372,13 @@ export default function AddProductModal({
 
           {/* PICTURES */}
           <div className="border-b border-gray-200 pb-4">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wider">
-                Product Images
-              </h3>
-              <button
-                type="button"
-                onClick={handleAddPicture}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
-              >
-                + Add URL
-              </button>
-            </div>
-            {pictures.length > 0 ? (
-              pictures.map((url, idx) => (
-                <div key={idx} className="flex gap-2 mt-2">
-                  <input
-                    value={url}
-                    onChange={e => handlePictureChange(idx, e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                    className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemovePicture(idx)}
-                    className="text-red-500 hover:text-red-700 px-3 transition-colors"
-                    aria-label="Remove image"
-                  >
-                    ✖
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-400 italic">No images added yet. Click "Add URL" to add product images.</p>
-            )}
+            <Uploader
+              folder="user-uploads"
+              maxSize={10}
+              accept="image/*,.pdf,.doc,.docx"
+              multiple={true}
+              onUploadSuccess={handleUploadSuccess}
+              onUploadError={handleUploadError} />
           </div>
 
           {/* TRANSPORTATION */}
