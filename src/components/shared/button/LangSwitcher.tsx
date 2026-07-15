@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({ ...props }) {
     const router = useRouter();
     const pathname = usePathname();
     const locale = useLocale();
@@ -24,7 +24,7 @@ export default function LanguageSwitcher() {
     };
 
     return (
-        <div>
+        <div {...props}>
             <button
                 onClick={() => switchLanguage()}
             >

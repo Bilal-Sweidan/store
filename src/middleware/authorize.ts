@@ -25,7 +25,7 @@ export function withAdmin<TContext = Record<string, unknown>, TReturn extends Re
     handler: (req: NextRequest, ctx: TContext) => TReturn | Promise<TReturn>) {
     return async (req: NextRequest, ctx: TContext) => {
         const session = await auth();
-
+        console.log(session)
         if (!session?.user) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }

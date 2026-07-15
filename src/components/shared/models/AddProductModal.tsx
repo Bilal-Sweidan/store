@@ -1,146 +1,496 @@
 'use client';
+
 import { useState } from 'react';
 import { IProduct } from '@/types/product';
 
 type NewProduct = Omit<IProduct, '_id' | 'createdAt' | 'updatedAt'>;
 
-export default function AddProductModal({ isOpen, onClose, onAdd }: { isOpen: boolean; onClose: () => void; onAdd: (product: NewProduct) => void }) {
-  const [nameEn, setNameEn] = useState('');
-  const [nameAr, setNameAr] = useState('');
-  const [description, setDescription] = useState('');
-  const [priceWithoutDiscount, setPriceWithoutDiscount] = useState('');
-  const [priceWithDiscount, setPriceWithDiscount] = useState('');
-  const [priceOld, setPriceOld] = useState('');
-  const [discountNumber, setDiscountNumber] = useState('');
-  const [discountValue, setDiscountValue] = useState('');
-  const [minAmount, setMinAmount] = useState('');
+interface AddProductModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onAdd: (product: NewProduct) => void;
+  categories?: { _id: string; name: { en: string; ar?: string } }[];
+}
+
+export default function AddProductModal({
+  isOpen,
+  onClose,
+  onAdd,
+  categories = []
+}: AddProductModalProps) {
+  // Centralized form state
+  const [formData, setFormData] = useState({
+    nameEn: '',
+    nameAr: '',
+    description: '',
+    priceWithoutDiscount: '',
+    priceWithDiscount: '',
+    priceOld: '',
+    discountNumber: '',
+    discountValue: '',
+    minAmount: '',
+    transportFees: '',
+    transportTime: '',
+    categoryId: '',
+  });
+
   const [details, setDetails] = useState<{ key: string; value: string }[]>([]);
   const [pictures, setPictures] = useState<string[]>([]);
-  const [transportFees, setTransportFees] = useState('');
-  const [transportTime, setTransportTime] = useState('');
-  const [categoryId, setCategoryId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Unified input handler
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Details management
   const handleAddDetail = () => setDetails([...details, { key: '', value: '' }]);
+
   const handleDetailChange = (idx: number, field: 'key' | 'value', val: string) => {
     const updated = [...details];
     updated[idx][field] = val;
     setDetails(updated);
   };
+
   const handleRemoveDetail = (idx: number) => setDetails(details.filter((_, i) => i !== idx));
 
+  // Pictures management
   const handleAddPicture = () => setPictures([...pictures, '']);
+
   const handlePictureChange = (idx: number, val: string) => {
     const updated = [...pictures];
     updated[idx] = val;
     setPictures(updated);
   };
+
   const handleRemovePicture = (idx: number) => setPictures(pictures.filter((_, i) => i !== idx));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Reset function - clean separation of reset logic
+  const resetForm = () => {
+    setFormData({
+      nameEn: '',
+      nameAr: '',
+      description: '',
+      priceWithoutDiscount: '',
+      priceWithDiscount: '',
+      priceOld: '',
+      discountNumber: '',
+      discountValue: '',
+      minAmount: '',
+      transportFees: '',
+      transportTime: '',
+      categoryId: '',
+    });
+    setDetails([]);
+    setPictures([]);
+    setIsSubmitting(false);
+  };
+
+  // Submit handler with proper validation
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nameEn || !priceWithoutDiscount) {
-      alert('English name and price (without discount) are required');
-      return;
+    setIsSubmitting(true);
+
+    try {
+      // Validation
+      if (!formData.nameEn || !formData.priceWithoutDiscount) {
+        alert('English name and price (without discount) are required');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Build product object matching the schema exactly
+      const product: NewProduct = {
+        name: {
+          en: formData.nameEn.trim(),
+          ar: formData.nameAr.trim() || undefined,
+        },
+        description: formData.description.trim() || undefined,
+        category: formData.categoryId || undefined,
+        price: {
+          withoutDiscount: parseFloat(formData.priceWithoutDiscount),
+          withDiscount: formData.priceWithDiscount ? parseFloat(formData.priceWithDiscount) : undefined,
+          old: formData.priceOld ? parseFloat(formData.priceOld) : undefined,
+        },
+        discount: (formData.discountNumber || formData.discountValue) ? {
+          number: formData.discountNumber ? parseInt(formData.discountNumber) : undefined,
+          value: formData.discountValue ? parseFloat(formData.discountValue) : undefined,
+        } : undefined,
+        minAmount: formData.minAmount ? parseInt(formData.minAmount) : undefined,
+        details: details.length > 0 ? details.filter(d => d.key.trim() && d.value.trim()) : undefined,
+        picture: pictures.length > 0 ? pictures.filter(url => url.trim()) : undefined,
+        transportationFees: formData.transportFees ? parseFloat(formData.transportFees) : undefined,
+        transportationTime: formData.transportTime.trim() || undefined,
+      };
+
+      await onAdd(product);
+      resetForm();
+      onClose();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Failed to add product. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
-    const product: NewProduct = {
-      name: { en: nameEn, ar: nameAr || undefined },
-      description: description || undefined,
-      price: {
-        withoutDiscount: parseFloat(priceWithoutDiscount),
-        withDiscount: priceWithDiscount ? parseFloat(priceWithDiscount) : undefined,
-        old: priceOld ? parseFloat(priceOld) : undefined,
-      },
-      discount: (discountNumber || discountValue) ? {
-        number: discountNumber ? parseInt(discountNumber) : undefined,
-        value: discountValue ? parseFloat(discountValue) : undefined,
-      } : undefined,
-      minAmount: minAmount ? parseInt(minAmount) : undefined,
-      details: details.length ? details.filter(d => d.key && d.value) : undefined,
-      picture: pictures.length ? pictures.filter(url => url.trim()) : undefined,
-      transportationFees: transportFees ? parseFloat(transportFees) : undefined,
-      transportationTime: transportTime || undefined,
-      category: categoryId || undefined,
-    };
-    onAdd(product);
-    // reset
-    setNameEn(''); setNameAr(''); setDescription(''); setPriceWithoutDiscount(''); setPriceWithDiscount('');
-    setPriceOld(''); setDiscountNumber(''); setDiscountValue(''); setMinAmount(''); setDetails([]);
-    setPictures([]); setTransportFees(''); setTransportTime(''); setCategoryId('');
-    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">Add New Product</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
-          <div className="grid grid-cols-2 gap-3">
-            <div><label className="block text-sm font-medium">Name (EN) *</label>
-              <input type="text" value={nameEn} onChange={e => setNameEn(e.target.value)} className="w-full border rounded px-2 py-1" required /></div>
-            <div><label className="block text-sm font-medium">Name (AR)</label>
-              <input type="text" value={nameAr} onChange={e => setNameAr(e.target.value)} className="w-full border rounded px-2 py-1" dir="rtl" /></div>
-          </div>
-          <div><label className="block text-sm font-medium">Description</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} className="w-full border rounded px-2 py-1" /></div>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Add New Product</h2>
 
-          {/* Price */}
-          <div className="border p-3 rounded">
-            <h3 className="font-semibold mb-2">Price</h3>
-            <div className="grid grid-cols-3 gap-2">
-              <div><label className="text-xs">Without Discount *</label><input type="number" step="0.01" value={priceWithoutDiscount} onChange={e => setPriceWithoutDiscount(e.target.value)} className="w-full border rounded px-1 py-1" required /></div>
-              <div><label className="text-xs">With Discount</label><input type="number" step="0.01" value={priceWithDiscount} onChange={e => setPriceWithDiscount(e.target.value)} className="w-full border rounded px-1 py-1" /></div>
-              <div><label className="text-xs">Old Price</label><input type="number" step="0.01" value={priceOld} onChange={e => setPriceOld(e.target.value)} className="w-full border rounded px-1 py-1" /></div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* NAME SECTION */}
+          <div className="border-b border-gray-200 pb-4">
+            <h3 className="font-semibold mb-3 text-gray-700 text-sm uppercase tracking-wider">
+              Basic Information
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="nameEn" className="block text-sm font-medium text-gray-700 mb-1">
+                  Name (EN) <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="nameEn"
+                  type="text"
+                  name="nameEn"
+                  value={formData.nameEn}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter product name in English"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="nameAr" className="block text-sm font-medium text-gray-700 mb-1">
+                  Name (AR)
+                </label>
+                <input
+                  id="nameAr"
+                  type="text"
+                  name="nameAr"
+                  value={formData.nameAr}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="اسم المنتج بالعربية"
+                  dir="rtl"
+                />
+              </div>
+            </div>
+            <div className="mt-3">
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
+                placeholder="Enter product description"
+              />
             </div>
           </div>
 
-          {/* Discount & Min Amount */}
-          <div className="grid grid-cols-3 gap-3">
-            <div><label className="block text-sm">Discount (after X items)</label><input type="number" value={discountNumber} onChange={e => setDiscountNumber(e.target.value)} className="w-full border rounded px-2 py-1" /></div>
-            <div><label className="block text-sm">Discount %</label><input type="number" step="0.1" value={discountValue} onChange={e => setDiscountValue(e.target.value)} className="w-full border rounded px-2 py-1" /></div>
-            <div><label className="block text-sm">Min Amount</label><input type="number" value={minAmount} onChange={e => setMinAmount(e.target.value)} className="w-full border rounded px-2 py-1" /></div>
-          </div>
-
-          {/* Details array */}
-          <div>
-            <div className="flex justify-between items-center"><label className="block text-sm font-medium">Details (key/value)</label><button type="button" onClick={handleAddDetail} className="text-blue-600 text-sm">+ Add</button></div>
-            {details.map((det, idx) => (
-              <div key={idx} className="flex gap-2 mt-1">
-                <input placeholder="Key" value={det.key} onChange={e => handleDetailChange(idx, 'key', e.target.value)} className="border rounded px-2 py-1 w-1/2" />
-                <input placeholder="Value" value={det.value} onChange={e => handleDetailChange(idx, 'value', e.target.value)} className="border rounded px-2 py-1 w-1/2" />
-                <button type="button" onClick={() => handleRemoveDetail(idx)} className="text-red-500">✖</button>
+          {/* PRICE SECTION */}
+          <div className="border-b border-gray-200 pb-4">
+            <h3 className="font-semibold mb-3 text-gray-700 text-sm uppercase tracking-wider">
+              Pricing
+            </h3>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label htmlFor="priceWithoutDiscount" className="block text-sm font-medium text-gray-700 mb-1">
+                  Without Discount <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="priceWithoutDiscount"
+                  type="number"
+                  name="priceWithoutDiscount"
+                  value={formData.priceWithoutDiscount}
+                  onChange={handleInputChange}
+                  step="0.01"
+                  min="0"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="0.00"
+                  required
+                />
               </div>
-            ))}
-          </div>
-
-          {/* Pictures */}
-          <div>
-            <div className="flex justify-between"><label className="block text-sm font-medium">Picture URLs</label><button type="button" onClick={handleAddPicture} className="text-blue-600 text-sm">+ Add URL</button></div>
-            {pictures.map((url, idx) => (
-              <div key={idx} className="flex gap-2 mt-1">
-                <input value={url} onChange={e => handlePictureChange(idx, e.target.value)} placeholder="https://..." className="border rounded px-2 py-1 flex-1" />
-                <button type="button" onClick={() => handleRemovePicture(idx)} className="text-red-500">✖</button>
+              <div>
+                <label htmlFor="priceWithDiscount" className="block text-sm font-medium text-gray-700 mb-1">
+                  With Discount
+                </label>
+                <input
+                  id="priceWithDiscount"
+                  type="number"
+                  name="priceWithDiscount"
+                  value={formData.priceWithDiscount}
+                  onChange={handleInputChange}
+                  step="0.01"
+                  min="0"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="0.00"
+                />
               </div>
-            ))}
+              <div>
+                <label htmlFor="priceOld" className="block text-sm font-medium text-gray-700 mb-1">
+                  Old Price
+                </label>
+                <input
+                  id="priceOld"
+                  type="number"
+                  name="priceOld"
+                  value={formData.priceOld}
+                  onChange={handleInputChange}
+                  step="0.01"
+                  min="0"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Transportation */}
-          <div className="grid grid-cols-2 gap-3">
-            <div><label className="block text-sm">Transportation Fees ($)</label><input type="number" step="0.01" value={transportFees} onChange={e => setTransportFees(e.target.value)} className="w-full border rounded px-2 py-1" /></div>
-            <div><label className="block text-sm">Transportation Time</label><input type="text" value={transportTime} onChange={e => setTransportTime(e.target.value)} placeholder="e.g., 3-5 days" className="w-full border rounded px-2 py-1" /></div>
+          {/* DISCOUNT & MIN AMOUNT */}
+          <div className="border-b border-gray-200 pb-4">
+            <h3 className="font-semibold mb-3 text-gray-700 text-sm uppercase tracking-wider">
+              Discount & Limits
+            </h3>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label htmlFor="discountNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                  Discount (after X items)
+                </label>
+                <input
+                  id="discountNumber"
+                  type="number"
+                  name="discountNumber"
+                  value={formData.discountNumber}
+                  onChange={handleInputChange}
+                  min="0"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="100"
+                />
+              </div>
+              <div>
+                <label htmlFor="discountValue" className="block text-sm font-medium text-gray-700 mb-1">
+                  Discount (%)
+                </label>
+                <input
+                  id="discountValue"
+                  type="number"
+                  name="discountValue"
+                  value={formData.discountValue}
+                  onChange={handleInputChange}
+                  step="0.1"
+                  min="0"
+                  max="100"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="14"
+                />
+              </div>
+              <div>
+                <label htmlFor="minAmount" className="block text-sm font-medium text-gray-700 mb-1">
+                  Min Amount
+                </label>
+                <input
+                  id="minAmount"
+                  type="number"
+                  name="minAmount"
+                  value={formData.minAmount}
+                  onChange={handleInputChange}
+                  min="0"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="1"
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Category */}
-          <div><label className="block text-sm">Category ID (ObjectId)</label>
-            <input type="text" value={categoryId} onChange={e => setCategoryId(e.target.value)} placeholder="65f1a2b3c4d5e6f7a8b9c0d1" className="w-full border rounded px-2 py-1" />
-            <p className="text-xs text-gray-500">You can later replace this with a dropdown from /api/categories</p>
+          {/* DETAILS */}
+          <div className="border-b border-gray-200 pb-4">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wider">
+                Product Details
+              </h3>
+              <button
+                type="button"
+                onClick={handleAddDetail}
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+              >
+                + Add Detail
+              </button>
+            </div>
+            {details.length > 0 ? (
+              details.map((det, idx) => (
+                <div key={idx} className="flex gap-2 mt-2">
+                  <input
+                    placeholder="Key (e.g., Brand)"
+                    value={det.key}
+                    onChange={e => handleDetailChange(idx, 'key', e.target.value)}
+                    className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  />
+                  <input
+                    placeholder="Value (e.g., Nike)"
+                    value={det.value}
+                    onChange={e => handleDetailChange(idx, 'value', e.target.value)}
+                    className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveDetail(idx)}
+                    className="text-red-500 hover:text-red-700 px-3 transition-colors"
+                    aria-label="Remove detail"
+                  >
+                    ✖
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-400 italic">No details added yet. Click "Add Detail" to add product specifications.</p>
+            )}
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="border px-4 py-2 rounded">Cancel</button>
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Save Product</button>
+          {/* PICTURES */}
+          <div className="border-b border-gray-200 pb-4">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wider">
+                Product Images
+              </h3>
+              <button
+                type="button"
+                onClick={handleAddPicture}
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+              >
+                + Add URL
+              </button>
+            </div>
+            {pictures.length > 0 ? (
+              pictures.map((url, idx) => (
+                <div key={idx} className="flex gap-2 mt-2">
+                  <input
+                    value={url}
+                    onChange={e => handlePictureChange(idx, e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemovePicture(idx)}
+                    className="text-red-500 hover:text-red-700 px-3 transition-colors"
+                    aria-label="Remove image"
+                  >
+                    ✖
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-gray-400 italic">No images added yet. Click "Add URL" to add product images.</p>
+            )}
+          </div>
+
+          {/* TRANSPORTATION */}
+          <div className="border-b border-gray-200 pb-4">
+            <h3 className="font-semibold mb-3 text-gray-700 text-sm uppercase tracking-wider">
+              Shipping & Delivery
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="transportFees" className="block text-sm font-medium text-gray-700 mb-1">
+                  Transportation Fees ($)
+                </label>
+                <input
+                  id="transportFees"
+                  type="number"
+                  name="transportFees"
+                  value={formData.transportFees}
+                  onChange={handleInputChange}
+                  step="0.01"
+                  min="0"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="0.00"
+                />
+              </div>
+              <div>
+                <label htmlFor="transportTime" className="block text-sm font-medium text-gray-700 mb-1">
+                  Transportation Time
+                </label>
+                <input
+                  id="transportTime"
+                  type="text"
+                  name="transportTime"
+                  value={formData.transportTime}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="3-5 business days"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* CATEGORY */}
+          <div className="pb-2">
+            <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 mb-1">
+              Category
+            </label>
+            {categories.length > 0 ? (
+              <select
+                id="categoryId"
+                name="categoryId"
+                value={formData.categoryId}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              >
+                <option value="">Select a category</option>
+                {categories.map(cat => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name.en}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                id="categoryId"
+                type="text"
+                name="categoryId"
+                value={formData.categoryId}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                placeholder="Enter category ID (ObjectId)"
+              />
+            )}
+            <p className="text-xs text-gray-400 mt-1">
+              {categories.length > 0
+                ? 'Select from existing categories'
+                : 'You can later replace this with a dropdown from /api/categories'}
+            </p>
+          </div>
+
+          {/* ACTION BUTTONS */}
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={() => {
+                resetForm();
+                onClose();
+              }}
+              className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-gray-700 font-medium"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Saving...' : 'Save Product'}
+            </button>
           </div>
         </form>
       </div>

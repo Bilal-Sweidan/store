@@ -13,9 +13,10 @@ export default function ProductsPage() {
 
     const fetchProducts = async () => {
         try {
-            const res = await fetch('/api/products');
+            const res = await fetch('/api/product');
             const data = await res.json();
-            setProducts(data);
+            console.log(data)
+            setProducts(data.products);
         } catch (err) { console.error(err); }
         finally { setLoading(false); }
     };
@@ -31,7 +32,7 @@ export default function ProductsPage() {
 
     const handleAdd = async (newProduct: Omit<IProduct, '_id'>) => {
         try {
-            const res = await fetch('/api/products', {
+            const res = await fetch('/api/product', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newProduct),
