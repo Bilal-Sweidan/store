@@ -12,7 +12,7 @@ const adminActionSchema = z.object({
 })
 
 
-export const PATCH = withAdmin(async (req: NextRequest, { params }: { params: userId: string }) => {
+export const PATCH = withAdmin(async (req: NextRequest, { params }: { params: { id: string } }) => {
     try {
         const userId = params.id
         const body = await req.json()
