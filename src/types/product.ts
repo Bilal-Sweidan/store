@@ -16,4 +16,5 @@ export interface IProduct {
     transportationTime?: string;
     createdAt?: string;
     updatedAt?: string;
+    pictures: string[]
 }

@@ -5,10 +5,12 @@ import Link from "next/link";
 import { useLocale } from "next-intl";
 // components
 import MainHeader from "@/components/public/layout/headers/MainHeader";
+import { useEffect, useState } from "react";
 
 export default function Home() {
     const local = useLocale()
 
+    const [products, setProducts] = useState([])
     const featuredProducts = [
         { _id: 1, name: "power plus", describe: "SolarPower Europe is the award-winning link between policymakers and the solar PV value chain. Get to know the SolarPower Europe team working to transform ", price: "$999", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
         { _id: 2, name: "MacBook Air M3", describe: "SolarPower Europe is the award-winning link between policymakers and the solar PV value chain. Get to know the SolarPower Europe team working to transform ", price: "$1299", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
@@ -16,10 +18,17 @@ export default function Home() {
         { _id: 4, name: "Sony WH-1000XM5", describe: "SolarPower Europe is the award-winning link between policymakers and the solar PV value chain. Get to know the SolarPower Europe team working to transform ", price: "$399", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
     ];
 
-    const flashDeals = [
-        { name: "Samsung Galaxy S24", price: "$899", discount: "10%", image: "https://powerplus-eg.com/wp-content/uploads/2025/07/Untitled-design.webp" },
-        { name: "Google Pixel 8", price: "$799", discount: "15%", image: "https://5.imimg.com/data5/LH/DJ/MB/SELLER-3379571/wires-and-cabels.JPG" },
-    ];
+    useEffect(() => { fetchProducts(); }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const res = await fetch('/api/product');
+            const data = await res.json();
+            console.log(data)
+            setProducts(data.products);
+        } catch (err) { console.error(err); }
+        // finally { setLoading(false); }
+    };
 
 
     return (
@@ -90,32 +99,42 @@ export default function Home() {
                             See all
                         </button>
                     </div>
-                    <div className="columns-2 gap-3 space-y-3">
-                        {featuredProducts.map((product) => (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 h-auto">
+                        {products.map((product) => (
                             <Link
                                 href={`/${local}/client/product/${product._id}`}
-                                key={product.name}
-                                className="break-inside-avoid overflow-hidden rounded-2xl bg-card p-3 shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-0.5 hover:shadow-md hover:cursor-pointer"
+                                key={product._id || product.name.en}
+                                className="group block transition-transform hover:scale-[1.02]"
                             >
-                                <div className="mb-2 overflow-hidden rounded-xl bg-gray-100">
+                                <div className="overflow-hidden rounded-xl bg-gray-100">
                                     <Image
-                                        src={product.image}
-                                        alt={product.name}
-                                        width={0}
-                                        height={0}
-                                        sizes="50vw"
-                                        className="w-full h-auto"
+                                        src={product.pictures[0]}
+                                        alt={product.name.en}
+                                        width={300}
+                                        height={300}
+                                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                                        className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                                        loading="lazy"
                                     />
                                 </div>
-                                <h3 className="line-clamp-2 text-[11px] font-medium text-primary capitalize text-lg">
-                                    {product.name}
+
+                                <h3 className="mt-2 text-sm font-medium text-gray-900 line-clamp-1">
+                                    {product.name.en}
                                 </h3>
-                                <div>
-                                    <span className="text-xs">{product.describe}</span>
-                                </div>
+
+                                <p className="text-xs text-gray-600 line-clamp-2">
+                                    {product.description}
+                                </p>
+
                                 <div className="mt-1 flex items-center justify-between">
-                                    <span className="text-xs font-bold text-indigo-600">{product.price}</span>
-                                    <span className="text-[10px] text-secondary">Free delivery</span>
+                                    <span className="text-sm font-bold text-indigo-600">
+                                        ${product.price.withoutDiscount}
+                                    </span>
+                                    {product.price.withoutDiscount > 50 && (
+                                        <span className="text-[10px] text-green-600 font-medium">
+                                            Free delivery
+                                        </span>
+                                    )}
                                 </div>
                             </Link>
                         ))}

@@ -45,7 +45,7 @@ const ProductSchema = new Schema({
             }
         }
     ],
-    picture: [{
+    pictures: [{
         type: String
     }],
     transportationFees: {

@@ -33,7 +33,7 @@ export default function AddProductModal({
     transportFees: '',
     transportTime: '',
     categoryId: '',
-    images: []
+    pictures: []
   });
 
   const [details, setDetails] = useState<{ key: string; value: string }[]>([]);
@@ -85,7 +85,7 @@ export default function AddProductModal({
       transportFees: '',
       transportTime: '',
       categoryId: '',
-      images: []
+      pictures: []
     });
     setDetails([]);
     setPictures([]);
@@ -127,6 +127,7 @@ export default function AddProductModal({
         picture: pictures.length > 0 ? pictures.filter(url => url.trim()) : undefined,
         transportationFees: formData.transportFees ? parseFloat(formData.transportFees) : undefined,
         transportationTime: formData.transportTime.trim() || undefined,
+        pictures: formData.pictures || []
       };
 
       await onAdd(product);
@@ -144,7 +145,7 @@ export default function AddProductModal({
     console.log('Upload successful:', result);
     // You can save the Cloudinary URL to your database here
     const imageUrl = result.data.secure_url;
-    console.log('Image URL:', imageUrl);
+    setFormData(prev => ({ ...prev, pictures: [...prev.pictures, imageUrl] }))
   };
 
   const handleUploadError = (error: any) => {
